@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  blockchain-client:
+    # image: blockchain-client:latest
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - RPC_URI=http://172.17.0.1:7545
+      - NODE_ENV=production
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - OWNER_ADDRESS=${OWNER_ADDRESS}
+      - MINTER_ADDRESS=${MINTER_ADDRESS}
+      - MINTER_PRIVATE_KEY=${MINTER_PRIVATE_KEY}
+      - BURNER_ADDRESS=${BURNER_ADDRESS}
+      - BURNER_PRIVATE_KEY=${BURNER_PRIVATE_KEY}
+
+# Needs ganache running on 0.0.0.0:7545
+# Also run migrations from https://github.com/simplicy-io/eurc-eth
