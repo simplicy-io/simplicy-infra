@@ -6,7 +6,7 @@ Service to interact with ERC contract
 
 #### Prerequisites
 
-- NodeJS 12+ and npm
+- NodeJS 14+ and npm
 
 Install dependencies
 
