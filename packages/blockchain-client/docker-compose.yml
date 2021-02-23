@@ -2,7 +2,7 @@ version: '3'
 
 services:
   blockchain-client:
-    # image: blockchain-client:latest
+    # image: docker.simplicy.io/blockchain-client:latest
     build: .
     ports:
       - "8000:8000"
