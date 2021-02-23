@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Test Blockchain Client
 
 on:
   pull_request:

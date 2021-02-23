@@ -5,7 +5,6 @@ WORKDIR /home/craft/
 RUN cd blockchain-client \
     && npm install \
     && npm run build \
-    && rm -fr node_modules \
     && npm install --only=production
 
 FROM node:slim
