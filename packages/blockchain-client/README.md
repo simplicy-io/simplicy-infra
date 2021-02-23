@@ -36,18 +36,12 @@ npm run start:debug
 - Container Runtime
 
 ```shell
-docker run --name erc-client -d \
-  -e "RPC_URI=http://172.17.0.1:7545" \
-  -e "PRIVATE_KEY=707d322470dbdc3c35a1642b77d94f5ee6b2adf32fec55503a9b9314888bb7ab" \
-  -e "CONTRACT_ADDRESS=0xa86f49f07a65F55D580777627E281217B18ec38c" \
-  -e "OWNER_ADDRESS=0x339F1F7C8682b114C7BDc642b83d30855b20cb72" \
-  -p "8000:8000" \
-  docker.simplicy.io/blockchain-client:latest
+docker-compose up -d
 ```
 
 Note:
 - This example sets `RPC_URL` to ganache running on docker host.
-- Change the `PRIVATE_KEY`, `CONTRACT_ADDRESS` and `OWNER_ADDRESS` as per the network.
+- Change the environment variables in `.env` file as per the network.
 
 
 ### Build container image
