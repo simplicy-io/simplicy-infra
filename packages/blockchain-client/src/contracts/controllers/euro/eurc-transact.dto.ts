@@ -1,6 +1,6 @@
 import { IsEthereumAddress, IsNumberString } from 'class-validator';
 
-export class EurcAddressDto {
+export class EurcTransactDto {
   @IsEthereumAddress()
   address: string;
 

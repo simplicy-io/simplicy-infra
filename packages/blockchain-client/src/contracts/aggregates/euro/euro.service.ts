@@ -21,7 +21,7 @@ import {
   CONTRACT_ADDRESS,
   OWNER_ADDRESS,
 } from '../../../config/config.service';
-import { EurcAddressDto } from '../../../contracts/controllers/euro/eurc-address.dto';
+import { EurcTransactDto } from '../../../contracts/controllers/euro/eurc-transact.dto';
 
 @Injectable()
 export class EuroService implements OnModuleInit {
@@ -90,7 +90,7 @@ export class EuroService implements OnModuleInit {
     }
   }
 
-  async transferFromOwner(payload: EurcAddressDto) {
+  async transferFromOwner(payload: EurcTransactDto) {
     const amountNumber = Number(payload.amount);
     if (Number.isNaN(amountNumber) || amountNumber <= 0) {
       throw new BadRequestException({ InvalidAmount: payload });
@@ -123,7 +123,7 @@ export class EuroService implements OnModuleInit {
     }
   }
 
-  async mint(payload: EurcAddressDto) {
+  async mint(payload: EurcTransactDto) {
     const amountNumber = Number(payload.amount);
     if (Number.isNaN(amountNumber) || amountNumber <= 0) {
       throw new BadRequestException({ InvalidAmount: payload });
