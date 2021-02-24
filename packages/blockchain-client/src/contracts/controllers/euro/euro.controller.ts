@@ -8,7 +8,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { EuroService } from '../../aggregates/euro/euro.service';
-import { EurcAddressDto } from './eurc-address.dto';
+import { EurcBalanceDto } from './eurc-balance.dto';
+import { EurcTransactDto } from './eurc-transact.dto';
 
 @Controller('euro')
 export class EuroController {
@@ -16,7 +17,7 @@ export class EuroController {
 
   @Get('balance_of')
   @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))
-  async balance(@Query() params: EurcAddressDto) {
+  async balance(@Query() params: EurcBalanceDto) {
     return await this.euro.getBalance(params.address);
   }
 
@@ -32,13 +33,13 @@ export class EuroController {
 
   @Post('transfer_from_owner')
   @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))
-  async transferFromOwner(@Body() payload: EurcAddressDto) {
+  async transferFromOwner(@Body() payload: EurcTransactDto) {
     return await this.euro.transferFromOwner(payload);
   }
 
   @Post('mint')
   @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))
-  async mint(@Body() payload: EurcAddressDto) {
+  async mint(@Body() payload: EurcTransactDto) {
     return await this.euro.mint(payload);
   }
 }
