@@ -22,11 +22,7 @@ RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
 RUN useradd -ms /bin/bash craft
 WORKDIR /home/craft/blockchain-client
 COPY --from=0 /home/craft/blockchain-client .
-
 RUN chown -R craft:craft /home/craft
-
-# set project directory
-WORKDIR /home/craft/blockchain-client
 
 # Expose port
 EXPOSE 8000
