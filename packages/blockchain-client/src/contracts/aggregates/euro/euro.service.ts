@@ -90,7 +90,7 @@ export class EuroService implements OnModuleInit {
     }
   }
 
-  async transfer(payload: EurcAddressDto) {
+  async transferFromOwner(payload: EurcAddressDto) {
     const amountNumber = Number(payload.amount);
     if (Number.isNaN(amountNumber) || amountNumber <= 0) {
       throw new BadRequestException({ InvalidAmount: payload });

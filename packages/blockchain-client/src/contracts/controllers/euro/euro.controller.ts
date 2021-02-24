@@ -30,10 +30,10 @@ export class EuroController {
     return await this.euro.getContractName();
   }
 
-  @Post('transfer')
+  @Post('transfer_from_owner')
   @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))
-  async transfer(@Body() payload: EurcAddressDto) {
-    return await this.euro.transfer(payload);
+  async transferFromOwner(@Body() payload: EurcAddressDto) {
+    return await this.euro.transferFromOwner(payload);
   }
 
   @Post('mint')
