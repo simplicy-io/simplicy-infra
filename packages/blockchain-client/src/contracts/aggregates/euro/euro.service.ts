@@ -22,6 +22,9 @@ import {
   OWNER_ADDRESS,
 } from '../../../config/config.service';
 import { EurcTransactDto } from '../../../contracts/controllers/euro/eurc-transact.dto';
+import { ValidateAddressDto } from '../../../contracts/controllers/euro/validate-address.dto';
+
+export const ADDRESS_VERIFICATION = 'ADDRESS_VERIFICATION';
 
 @Injectable()
 export class EuroService implements OnModuleInit {
@@ -151,6 +154,22 @@ export class EuroService implements OnModuleInit {
       this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
 
       return { transaction: serializedTx.toString('hex') };
+    } catch (error) {
+      throw new InternalServerErrorException(error.stack, error?.message);
+    }
+  }
+
+  async verifyAddress(payload: ValidateAddressDto) {
+    try {
+      const verifiedAddress = this.web3.eth.accounts.recover(
+        ADDRESS_VERIFICATION,
+        payload.signature,
+      );
+      return {
+        addressToVerify: payload.address,
+        verifiedAddress,
+        isVerified: verifiedAddress === payload.address,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error.stack, error?.message);
     }

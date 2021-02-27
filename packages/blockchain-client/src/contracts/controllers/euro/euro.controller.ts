@@ -10,6 +10,7 @@ import {
 import { EuroService } from '../../aggregates/euro/euro.service';
 import { EurcBalanceDto } from './eurc-balance.dto';
 import { EurcTransactDto } from './eurc-transact.dto';
+import { ValidateAddressDto } from './validate-address.dto';
 
 @Controller('euro')
 export class EuroController {
@@ -41,5 +42,11 @@ export class EuroController {
   @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))
   async mint(@Body() payload: EurcTransactDto) {
     return await this.euro.mint(payload);
+  }
+
+  @Post('verify_address')
+  @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))
+  async verifyAddress(@Body() payload: ValidateAddressDto) {
+    return await this.euro.verifyAddress(payload);
   }
 }
