@@ -1,0 +1,7 @@
+{
+  "name": "simplicy-mobile",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
