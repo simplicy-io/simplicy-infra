@@ -1,4 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { IonicModule } from '@ionic/angular';
 import { TokenService } from '../auth/token/token.service';
 
@@ -13,7 +14,7 @@ describe('CallbackPage', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [CallbackPage],
-        imports: [IonicModule.forRoot()],
+        imports: [IonicModule.forRoot(), RouterTestingModule],
         providers: [{ provide: TokenService, useValue: tokenSpy }],
       }).compileComponents();
 
