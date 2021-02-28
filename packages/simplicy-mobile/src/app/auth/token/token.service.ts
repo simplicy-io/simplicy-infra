@@ -28,6 +28,9 @@ import { switchMap, retry, catchError, map } from 'rxjs/operators';
 import { of, from, Observable } from 'rxjs';
 import { BrowserTab } from '@ionic-native/browser-tab/ngx';
 import { AppInfo } from './app-info.interface';
+import { StorageService } from '../storage/storage.service';
+
+export const APP_SCOPE = 'profile%20openid%20email%20roles%20phone';
 
 @Injectable({
   providedIn: 'root',
@@ -43,15 +46,12 @@ export class TokenService {
     private http: HttpClient,
     private platform: Platform,
     private browserTab: BrowserTab,
+    private store: StorageService,
   ) {}
 
   configure(infoUrl: string) {
     this.config = this.http.get<AppInfo>(infoUrl).pipe(
       map(appInfo => {
-        for (const key of Object.keys(appInfo)) {
-          localStorage.setItem(key, appInfo[key]);
-        }
-
         return {
           authServerUrl: appInfo.authServerURL,
           authorizationUrl: appInfo.authorizationURL,
@@ -60,26 +60,33 @@ export class TokenService {
           logoutUrl: appInfo.appURL + '/connected_device/revoke_token',
           profileUrl: appInfo.profileURL,
           revocationUrl: appInfo.revocationURL,
-          scope: 'profile%20openid%20email%20roles',
+          scope: APP_SCOPE,
           tokenUrl: appInfo.tokenURL,
+          jwksUrl: appInfo.authServerURL + '/.well-known/jwks',
         } as OAuth2Config;
       }),
-
       catchError(error => {
         return of({
-          authServerUrl: localStorage.getItem(AUTH_SERVER_URL_KEY),
-          authorizationUrl: localStorage.getItem(AUTHORIZATION_URL_KEY),
+          authServerUrl: this.store.getItem(AUTH_SERVER_URL_KEY),
+          authorizationUrl: this.store.getItem(AUTHORIZATION_URL_KEY),
           callbackUrl:
-            localStorage.getItem(APP_URL_KEY) + '/connected_device/callback',
-          clientId: localStorage.getItem(CLIENT_ID_KEY),
+            this.store.getItem(APP_URL_KEY) + '/connected_device/callback',
+          clientId: this.store.getItem(CLIENT_ID_KEY),
           logoutUrl:
-            localStorage.getItem(APP_URL_KEY) +
-            '/connected_device/revoke_token',
-          profileUrl: localStorage.getItem(PROFILE_URL_KEY),
-          revocationUrl: localStorage.getItem(REVOCATION_URL_KEY),
-          scope: 'profile%20openid%20email%20roles',
-          tokenUrl: localStorage.getItem(TOKEN_URL_KEY),
+            this.store.getItem(APP_URL_KEY) + '/connected_device/revoke_token',
+          profileUrl: this.store.getItem(PROFILE_URL_KEY),
+          revocationUrl: this.store.getItem(REVOCATION_URL_KEY),
+          scope: APP_SCOPE,
+          tokenUrl: this.store.getItem(TOKEN_URL_KEY),
+          jwksUrl:
+            this.store.getItem(AUTH_SERVER_URL_KEY) + '/.well-known/jwks',
         } as OAuth2Config);
+      }),
+      map(appInfo => {
+        for (const key of Object.keys(appInfo)) {
+          this.store.setItem(key, appInfo[key]);
+        }
+        return appInfo;
       }),
     );
   }
@@ -105,13 +112,12 @@ export class TokenService {
   }
 
   logOut() {
-    localStorage.removeItem(LOGGED_IN);
-    this.revokeToken(localStorage.getItem(ACCESS_TOKEN), true);
+    this.revokeToken(this.store.getItem(ACCESS_TOKEN), true);
   }
 
   processCode(url: string) {
-    const savedState = localStorage.getItem(STATE);
-    localStorage.removeItem(STATE);
+    const savedState = this.store.getItem(STATE);
+    this.store.removeItem(STATE);
 
     const urlParts = new URL(url);
     const query = new URLSearchParams(urlParts.searchParams);
@@ -128,8 +134,8 @@ export class TokenService {
     }
 
     if (code) {
-      const codeVerifier = localStorage.getItem(CODE_VERIFIER);
-      localStorage.removeItem(CODE_VERIFIER);
+      const codeVerifier = this.store.getItem(CODE_VERIFIER);
+      this.store.removeItem(CODE_VERIFIER);
 
       this.config
         .pipe(
@@ -156,13 +162,13 @@ export class TokenService {
               expirationTime.getSeconds() + Number(expiresIn),
             );
 
-            localStorage.setItem(ACCESS_TOKEN, response.access_token);
+            this.store.setItem(ACCESS_TOKEN, response.access_token);
 
             this.saveRefreshToken(response.refresh_token);
 
-            localStorage.setItem(EXPIRES_IN, expirationTime.toISOString());
-            localStorage.setItem(ID_TOKEN, response.id_token);
-            localStorage.setItem(LOGGED_IN, 'true');
+            this.store.setItem(EXPIRES_IN, expirationTime.toISOString());
+            this.store.setItem(ID_TOKEN, response.id_token);
+            this.store.setItem(LOGGED_IN, 'true');
 
             this.refreshCordova();
           },
@@ -172,7 +178,7 @@ export class TokenService {
   }
 
   revokeToken(accessToken: string, refresh: boolean = false) {
-    const token = localStorage.getItem(ACCESS_TOKEN);
+    const token = this.store.getItem(ACCESS_TOKEN);
     this.config
       .pipe(
         switchMap(config => {
@@ -191,13 +197,14 @@ export class TokenService {
           if (refresh) {
             this.refreshCordova();
           }
+          this.store.setItem(LOGGED_IN, 'false');
         },
         error: error => {},
       });
   }
 
   getToken() {
-    const expiration = localStorage.getItem(EXPIRES_IN);
+    const expiration = this.store.getItem(EXPIRES_IN);
     if (expiration) {
       const now = new Date();
       const expirationTime = new Date(expiration);
@@ -207,7 +214,7 @@ export class TokenService {
         expirationTime.getSeconds() - TEN_MINUTES_IN_SECONDS_NUMBER,
       );
       if (now < expirationTime) {
-        const accessToken = localStorage.getItem(ACCESS_TOKEN);
+        const accessToken = this.store.getItem(ACCESS_TOKEN);
         return of(accessToken);
       }
       return this.refreshToken();
@@ -240,12 +247,9 @@ export class TokenService {
                   expirationTime.setSeconds(
                     expirationTime.getSeconds() + Number(expiresIn),
                   );
-                  localStorage.setItem(
-                    EXPIRES_IN,
-                    expirationTime.toISOString(),
-                  );
-                  localStorage.setItem(ID_TOKEN, bearerToken.id_token);
-                  localStorage.setItem(ACCESS_TOKEN, bearerToken.access_token);
+                  this.store.setItem(EXPIRES_IN, expirationTime.toISOString());
+                  this.store.setItem(ID_TOKEN, bearerToken.id_token);
+                  this.store.setItem(ACCESS_TOKEN, bearerToken.access_token);
 
                   this.saveRefreshToken(bearerToken.refresh_token);
                   return of(bearerToken.access_token);
@@ -266,10 +270,10 @@ export class TokenService {
     return this.config.pipe(
       switchMap(config => {
         const state = this.generateRandomString();
-        localStorage.setItem(STATE, state);
+        this.store.setItem(STATE, state);
 
         const codeVerifier = this.generateRandomString();
-        localStorage.setItem(CODE_VERIFIER, codeVerifier);
+        this.store.setItem(CODE_VERIFIER, codeVerifier);
 
         const challenge = sjcl.codec.base64
           .fromBits(sjcl.hash.sha256.hash(codeVerifier))
@@ -311,8 +315,8 @@ export class TokenService {
   }
 
   saveRefreshToken(refreshToken: string) {
-    if (this.platform.is('pwa')) {
-      localStorage.setItem(REFRESH_TOKEN, refreshToken);
+    if (this.platform.is('pwa') || this.platform.is('desktop')) {
+      this.store.setItem(REFRESH_TOKEN, refreshToken);
     }
 
     if (this.platform.is('android') || this.platform.is('ios')) {
@@ -329,8 +333,8 @@ export class TokenService {
   }
 
   getRefreshToken(): Promise<string> {
-    if (this.platform.is('pwa')) {
-      return Promise.resolve(localStorage.getItem(REFRESH_TOKEN));
+    if (this.platform.is('pwa') || this.platform.is('desktop')) {
+      return Promise.resolve(this.store.getItem(REFRESH_TOKEN));
     }
 
     if (this.platform.is('android') || this.platform.is('ios')) {

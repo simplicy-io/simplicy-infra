@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { TokenService } from './auth/token/token.service';
 import { HttpClientModule } from '@angular/common/http';
 import { Web3Service } from './auth/web3/web3.service';
+import { StorageService } from './auth/storage/storage.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,10 +25,17 @@ import { Web3Service } from './auth/web3/web3.service';
     HttpClientModule,
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (store: StorageService) => () => store.init(),
+      deps: [StorageService],
+      multi: true,
+    },
     StatusBar,
     SplashScreen,
     InAppBrowser,
     TokenService,
+    StorageService,
     BrowserTab,
     Web3Service,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

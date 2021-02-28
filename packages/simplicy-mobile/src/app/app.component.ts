@@ -7,6 +7,7 @@ import { TokenService } from './auth/token/token.service';
 import { LOGGED_IN, APP_KEY } from './auth/token/storage-constants';
 import { Router } from '@angular/router';
 import { APP_INFO_URL } from './auth/token/credentials-config';
+import { SET_ITEM, StorageService } from './auth/storage/storage.service';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ export class AppComponent implements OnInit {
     private token: TokenService,
     private ngZone: NgZone,
     private router: Router,
-    public nav: NavController,
+    private nav: NavController,
+    private store: StorageService,
   ) {
     this.initializeApp();
     this.backButtonEventListener();
@@ -38,7 +40,15 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loggedIn = localStorage.getItem(LOGGED_IN) ? true : false;
+    this.loggedIn = this.store.getItem(LOGGED_IN) === 'true';
+    this.store.changes.subscribe({
+      next: res => {
+        if (res.event === SET_ITEM && res.value?.key === LOGGED_IN) {
+          this.loggedIn = res.value?.value === 'true';
+        }
+      },
+      error: error => {},
+    });
     this.token.configure(APP_INFO_URL);
   }
 

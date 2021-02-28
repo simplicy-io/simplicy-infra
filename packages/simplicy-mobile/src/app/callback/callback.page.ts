@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TokenService } from '../auth/token/token.service';
 
 @Component({
@@ -7,10 +8,16 @@ import { TokenService } from '../auth/token/token.service';
   styleUrls: ['./callback.page.scss'],
 })
 export class CallbackPage implements OnInit {
-  constructor(private readonly token: TokenService) {}
+  constructor(
+    private readonly token: TokenService,
+    private readonly router: Router,
+  ) {}
 
   ngOnInit() {
     const url = location.href;
-    this.token.processCode(url);
+    Promise.resolve(this.token.processCode(url))
+      .then(() => this.router.navigate(['/home']))
+      .then(success => {})
+      .catch(error => {});
   }
 }
