@@ -1,0 +1,8 @@
+NODE_ENV=development
+BLOCKCHAIN_CLIENT_URL=http://localhost:8000
+JWKS_ENDPOINT=https://accounts.simplicy.io/.well-known/jwks
+DB_HOST=localhost
+DB_NAME=identity-service
+DB_USER=identity-service
+DB_PASSWORD=admin
+MONGO_URI_PREFIX=mongodb

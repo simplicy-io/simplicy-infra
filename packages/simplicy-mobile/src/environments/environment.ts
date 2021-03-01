@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  rpcUrl: 'wss://main-light.eth.linkpool.io/ws',
+  rpcUrl: 'http://0.0.0.0:7545',
+  identityService: 'http://localhost:8100',
 };
 
 /*

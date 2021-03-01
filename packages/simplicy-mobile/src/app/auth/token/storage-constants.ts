@@ -21,3 +21,7 @@ export const TOKEN_URL_KEY = 'tokenURL';
 export const APP_URL_KEY = 'appURL';
 export const INTROSPECTION_URL_KEY = 'introspectionURL';
 export const JWKS_URL = 'jwksUrl';
+export const AUTHORIZATION = 'Authorization';
+export const PRIVATE_KEY = 'privateKey';
+export const MNEMONIC = 'mnemonic';
+export const WALLET_ADDRESS = 'walletAddress';

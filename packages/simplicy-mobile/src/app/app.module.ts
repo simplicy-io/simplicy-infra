@@ -14,6 +14,7 @@ import { TokenService } from './auth/token/token.service';
 import { HttpClientModule } from '@angular/common/http';
 import { Web3Service } from './auth/web3/web3.service';
 import { StorageService } from './auth/storage/storage.service';
+import { SecureStorageService } from './auth/secure-storage/secure-storage.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,6 +37,7 @@ import { StorageService } from './auth/storage/storage.service';
     InAppBrowser,
     TokenService,
     StorageService,
+    SecureStorageService,
     BrowserTab,
     Web3Service,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
