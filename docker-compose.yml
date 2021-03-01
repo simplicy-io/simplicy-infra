@@ -1,0 +1,76 @@
+version: "3.7"
+
+services:
+  blockchain-client:
+    image: docker.simplicy.io/blockchain-client:main
+    networks:
+      - ganache-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - RPC_URI=${RPC_URI}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - OWNER_ADDRESS=${OWNER_ADDRESS}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - MINTER_ADDRESS=${MINTER_ADDRESS}
+      - MINTER_PRIVATE_KEY=${MINTER_PRIVATE_KEY}
+      - BURNER_ADDRESS=${BURNER_ADDRESS}
+      - BURNER_PRIVATE_KEY=${BURNER_PRIVATE_KEY}
+
+  identity-service:
+    image: docker.simplicy.io/blockchain-client:main
+    networks:
+      - ganache-network
+      - mongodb-network
+      - traefik-public
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - BLOCKCHAIN_CLIENT_URL=${BLOCKCHAIN_CLIENT_URL}
+      - JWKS_ENDPOINT=${JWKS_ENDPOINT}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD={DB_PASSWORD}
+      - MONGO_URI_PREFIX=mongodb
+    deploy:
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.constraint-label=traefik-public"
+        - "traefik.http.routers.identity-service.rule=Host(`${WALLET_DOMAIN}`)"
+        - "traefik.http.routers.identity-service.entrypoints=http"
+        - "traefik.http.routers.identity-service.middlewares=https-redirect"
+        - "traefik.http.routers.identity-service-https.rule=Host(`${WALLET_DOMAIN}`)"
+        - "traefik.http.routers.identity-service-https.entrypoints=https"
+        - "traefik.http.routers.identity-service-https.tls=true"
+        - "traefik.http.routers.identity-service-https.tls.certresolver=le"
+        - "traefik.http.services.identity-service.loadbalancer.server.port=8100"
+
+networks:
+  traefik-public:
+    external: true
+  mongodb-network:
+    external: true
+  ganache-network:
+    external: true
+
+# NODE_ENV=production
+# CONTRACT_ADDRESS=0x2d0740429fb7b68fE0a803eAf2a54E5d39d3C42b
+# OWNER_ADDRESS=0x82f9139Bf0705FC245d287409C1166e1326F4A57
+# PRIVATE_KEY=0x257bc61ba80062d5ca018a41dcc4873d790780d51293c141554bebac15dd8933
+# MINTER_ADDRESS=0x8Bf76Bc7Cfb067730f74984b88d2241aD728208a
+# MINTER_PRIVATE_KEY=0x293890abea088c77ca89ec5de9c28409c2fc7a585b73af5a1a029db159308ebe
+# BURNER_ADDRESS=0x1779dB603574121944225f4f66B341Ef5a2c4Ce5
+# BURNER_PRIVATE_KEY=0x024b01d74910a8a5034f9fc431bea83e9a7ed7e8428e1cea59af1822a2d9e7d9
+# BLOCKCHAIN_CLIENT_URL=http://blockchain-client:8000
+# JWKS_ENDPOINT=https://accounts.simplicy.io/.well-known/jwks
+# DB_HOST=global-mongodb
+# DB_NAME=identity-service
+# DB_USER=identity-service
+# DB_PASSWORD=admin
+# MONGO_URI_PREFIX=mongodb
+# WALLET_DOMAIN=wallet.simplicy.io

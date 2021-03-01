@@ -11,7 +11,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, server);
   app.enableCors();
   app.setGlobalPrefix(GLOBAL_API_PREFIX);
-  app.use(express.static('public'));
   setupSwagger(app);
   setupEvents(app);
   await app.listen(8100);
