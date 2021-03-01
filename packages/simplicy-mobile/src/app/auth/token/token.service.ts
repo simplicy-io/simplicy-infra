@@ -24,11 +24,12 @@ import {
 import * as sjcl from 'sjcl';
 import { stringify } from 'querystring';
 import { Platform } from '@ionic/angular';
-import { switchMap, retry, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 import { of, from, Observable } from 'rxjs';
 import { BrowserTab } from '@ionic-native/browser-tab/ngx';
 import { AppInfo } from './app-info.interface';
 import { StorageService } from '../storage/storage.service';
+import { SETTINGS_STORAGE } from '../secure-storage/secure-storage.service';
 
 export const APP_SCOPE = 'profile%20openid%20email%20roles%20phone';
 
@@ -196,8 +197,8 @@ export class TokenService {
         next: success => {
           if (refresh) {
             this.refreshCordova();
+            this.store.setItem(LOGGED_IN, 'false');
           }
-          this.store.setItem(LOGGED_IN, 'false');
         },
         error: error => {},
       });
@@ -218,6 +219,29 @@ export class TokenService {
         return of(accessToken);
       }
       return this.refreshToken();
+    }
+    return of();
+  }
+
+  getTokenIdToken() {
+    const expiration = this.store.getItem(EXPIRES_IN);
+    if (expiration) {
+      const now = new Date();
+      const expirationTime = new Date(expiration);
+
+      // expire 10 min early
+      expirationTime.setSeconds(
+        expirationTime.getSeconds() - TEN_MINUTES_IN_SECONDS_NUMBER,
+      );
+      if (now < expirationTime) {
+        const idToken = this.store.getItem(ID_TOKEN);
+        return of(idToken);
+      }
+      return this.refreshToken().pipe(
+        map(refreshToken => {
+          return this.store.getItem(ID_TOKEN);
+        }),
+      );
     }
     return of();
   }
@@ -253,11 +277,6 @@ export class TokenService {
 
                   this.saveRefreshToken(bearerToken.refresh_token);
                   return of(bearerToken.access_token);
-                }),
-                retry(3),
-                catchError(error => {
-                  this.logOut();
-                  return of();
                 }),
               );
           }),
@@ -321,7 +340,7 @@ export class TokenService {
 
     if (this.platform.is('android') || this.platform.is('ios')) {
       const sharedPreferences = (window as any).plugins.SharedPreferences.getInstance(
-        'settings',
+        SETTINGS_STORAGE,
       );
       sharedPreferences.put(
         REFRESH_TOKEN,
@@ -339,7 +358,7 @@ export class TokenService {
 
     if (this.platform.is('android') || this.platform.is('ios')) {
       const sharedPreferences = (window as any).plugins.SharedPreferences.getInstance(
-        'settings',
+        SETTINGS_STORAGE,
       );
       return new Promise((resolve, reject) => {
         sharedPreferences.get(

@@ -9,7 +9,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier -c \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
-    "start:debug": "nest start -d -w",
+    "start:debug": "nest start -d 9223 -w",
     "prestart:prod": "rimraf dist && npm run build",
     "start:prod": "node dist/main.js",
     "lint": "eslint '{test,src}/**/*.ts'",

@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  identity-service:
+    # image: docker.simplicy.io/identity-service:latest
+    build: .
+    ports:
+      - "8100:8100"
+    environment:
+      - NODE_ENV=development
+      - BLOCKCHAIN_CLIENT_URL=http://localhost:8000
+      - JWKS_ENDPOINT=https://accounts.simplicy.io/.well-known/jwks
+      - DB_HOST=mongo
+      - DB_NAME=identity-service
+      - DB_USER=identity-service
+      - DB_PASSWORD=admin
+      - MONGO_URI_PREFIX=mongodb
+
+  mongo:
+    image: bitnami/mongodb
+    environment:
+      - MONGODB_USERNAME=identity-service
+      - MONGODB_PASSWORD=admin
+      - MONGODB_DATABASE=identity-service
+      - MONGODB_ROOT_PASSWORD=admin
+      - MONGODB_PRIMARY_ROOT_USER=root
+    volumes:
+      - mongo-vol:/bitnami
+
+volumes:
+  mongo-vol:
+
+# Needs blockchain client running on provided BLOCKCHAIN_CLIENT_URL;

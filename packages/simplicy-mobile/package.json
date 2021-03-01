@@ -34,6 +34,7 @@
     "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-inappbrowser": "^4.1.0",
     "core-js": "^3.8.3",
+    "ethers": "^5.0.31",
     "rxjs": "^6.6.3",
     "sjcl": "^1.0.8",
     "tslib": "^2.0.3",
