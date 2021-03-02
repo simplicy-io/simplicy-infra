@@ -29,6 +29,28 @@
       <ion-button (click)="createAccount()" *ngIf="!address">Create Wallet</ion-button>
     </ion-card-content>
   </ion-card>
+  <ion-card *ngIf="name && phone">
+    <ion-card-header>
+      <ion-card-title>Secrets</ion-card-title>
+      <ion-card-subtitle>private key and mnemonic</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngIf="isSecretVisible" class="selectable">{{ privateKey }}</div>
+      <div *ngIf="isSecretVisible" class="selectable">{{ mnemonic }}</div>
+      <ion-button
+        (click)="isSecretVisible = !isSecretVisible"
+        color="medium"
+        fill="clear"
+        *ngIf="!isSecretVisible">Tap to reveal
+      </ion-button>
+      <ion-button
+        (click)="isSecretVisible = !isSecretVisible"
+        color="medium"
+        fill="clear"
+        *ngIf="isSecretVisible">Tap to hide
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
 
 <ion-content *ngIf="!loggedIn" class="card">

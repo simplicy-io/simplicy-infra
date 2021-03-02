@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  rpcUrl: 'wss://main-light.eth.linkpool.io/ws',
+  rpcUrl: 'https://main-light.eth.linkpool.io',
   identityService: 'https://wallet.simplicy.io',
 };

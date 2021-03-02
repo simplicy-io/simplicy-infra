@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from '../auth/token/token.service';
-import { switchMap } from 'rxjs/operators';
+import { retry, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Platform } from '@ionic/angular';
 import {
@@ -38,6 +38,7 @@ export class HomePage implements OnInit {
   balance: number;
   privateKey: string;
   mnemonic: string;
+  isSecretVisible = false;
 
   constructor(
     private readonly token: TokenService,
@@ -141,6 +142,23 @@ export class HomePage implements OnInit {
         },
         error: error => {},
       });
+
+    if (this.platform.is('pwa') || this.platform.is('desktop')) {
+      // for development only
+      this.privateKey = this.store.getItem(PRIVATE_KEY);
+      this.mnemonic = this.store.getItem(MNEMONIC);
+    }
+
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      this.secureStore
+        .getItem(MNEMONIC)
+        .then(mnemonic => (this.mnemonic = mnemonic as string))
+        .catch(fail => {});
+      this.secureStore
+        .getItem(PRIVATE_KEY)
+        .then(privateKey => (this.privateKey = privateKey as string))
+        .catch(fail => {});
+    }
   }
 
   fetchAccount() {
@@ -153,6 +171,7 @@ export class HomePage implements OnInit {
             { headers: { [AUTHORIZATION]: `Bearer ${token}` } },
           );
         }),
+        retry(3),
       )
       .subscribe({
         next: res => {
