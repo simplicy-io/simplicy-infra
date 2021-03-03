@@ -38,13 +38,13 @@
       <div *ngIf="isSecretVisible" class="selectable">{{ privateKey }}</div>
       <div *ngIf="isSecretVisible" class="selectable">{{ mnemonic }}</div>
       <ion-button
-        (click)="isSecretVisible = !isSecretVisible"
+        (click)="revealSecrets()"
         color="medium"
         fill="clear"
         *ngIf="!isSecretVisible">Tap to reveal
       </ion-button>
       <ion-button
-        (click)="isSecretVisible = !isSecretVisible"
+        (click)="revealSecrets()"
         color="medium"
         fill="clear"
         *ngIf="isSecretVisible">Tap to hide

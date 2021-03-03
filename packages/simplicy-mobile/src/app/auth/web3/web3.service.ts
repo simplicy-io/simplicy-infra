@@ -10,12 +10,11 @@ export const ADDRESS_VERIFICATION = 'ADDRESS_VERIFICATION';
 })
 export class Web3Service {
   web3 = new Web3(new Web3.providers.HttpProvider(environment.rpcUrl));
-  ethers = new ethers.providers.Web3Provider(this.web3.eth.currentProvider);
 
   constructor() {}
 
-  async createAccount() {
-    const mnemonic = await ethers.utils.entropyToMnemonic(
+  createAccount() {
+    const mnemonic = ethers.utils.entropyToMnemonic(
       ethers.utils.randomBytes(16),
     );
     return ethers.Wallet.fromMnemonic(mnemonic);

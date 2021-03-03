@@ -7,6 +7,28 @@ Service to interact with ERC contract
 #### Prerequisites
 
 - NodeJS 14+ and npm
+- Ganache
+
+Start ganache
+
+```shell
+docker run \
+  --name ganache-blockchain \
+  -v $HOME/ganache-data:/data \
+  -p 7545:7545 -d \
+  trufflesuite/ganache-cli:latest -h 0.0.0.0 -p 7545 --db /data --networkId 43
+```
+
+Note: data will persist at location `~/ganache-data`. Remove it to reset things.
+
+rRun migrations from https://github.com/simplicy-io/eurc-eth.
+
+```shell
+git clone https://github.com/simplicy-io/eurc-eth.git && cd eurc-eth
+yarn
+cp secrets.json.example secrets.json
+yarn truffle migrate --network development
+```
 
 Install dependencies
 

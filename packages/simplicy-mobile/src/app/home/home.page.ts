@@ -20,7 +20,6 @@ import {
 } from '../common/url-endpoints';
 import { FetchAccountResponse } from './fetch-account-response.interface';
 import { SecureStorageService } from '../auth/secure-storage/secure-storage.service';
-import { forkJoin, from } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -70,13 +69,17 @@ export class HomePage implements OnInit {
     }
   }
 
+  revealSecrets() {
+    this.isSecretVisible = !this.isSecretVisible;
+    this.loadSecrets();
+  }
+
   createAccount() {
-    forkJoin({
-      token: this.token.getToken(),
-      account: from(this.web3.createAccount()),
-    })
+    this.token
+      .getToken()
       .pipe(
-        switchMap(({ token, account }) => {
+        switchMap(token => {
+          const account = this.web3.createAccount();
           this.privateKey = account.privateKey;
           this.mnemonic = account.mnemonic.phrase;
           const signedMsg = this.web3.signMessage(account.privateKey);
@@ -95,24 +98,7 @@ export class HomePage implements OnInit {
         next: res => {
           this.address = res?.address;
           this.store.setItem(WALLET_ADDRESS, this.address);
-
-          if (this.platform.is('pwa') || this.platform.is('desktop')) {
-            // for development only
-            this.store.setItem(PRIVATE_KEY, this.privateKey);
-            this.store.setItem(MNEMONIC, this.mnemonic);
-          }
-
-          // save private key safely
-          if (this.platform.is('android') || this.platform.is('ios')) {
-            this.secureStore
-              .setItem(PRIVATE_KEY, this.privateKey)
-              .then(success => {})
-              .catch(error => {});
-            this.secureStore
-              .setItem(MNEMONIC, this.mnemonic)
-              .then(success => {})
-              .catch(error => {});
-          }
+          this.storeSecrets();
         },
         error: error => {},
       });
@@ -139,26 +125,10 @@ export class HomePage implements OnInit {
           this.email = profile.email;
           this.picture = profile.picture;
           this.phone = profile.phone_number;
+          this.loadSecrets();
         },
         error: error => {},
       });
-
-    if (this.platform.is('pwa') || this.platform.is('desktop')) {
-      // for development only
-      this.privateKey = this.store.getItem(PRIVATE_KEY);
-      this.mnemonic = this.store.getItem(MNEMONIC);
-    }
-
-    if (this.platform.is('android') || this.platform.is('ios')) {
-      this.secureStore
-        .getItem(MNEMONIC)
-        .then(mnemonic => (this.mnemonic = mnemonic as string))
-        .catch(fail => {});
-      this.secureStore
-        .getItem(PRIVATE_KEY)
-        .then(privateKey => (this.privateKey = privateKey as string))
-        .catch(fail => {});
-    }
   }
 
   fetchAccount() {
@@ -194,5 +164,44 @@ export class HomePage implements OnInit {
         },
         error: error => {},
       });
+  }
+
+  loadSecrets() {
+    if (this.platform.is('pwa') || this.platform.is('desktop')) {
+      // for development only
+      this.privateKey = this.store.getItem(PRIVATE_KEY);
+      this.mnemonic = this.store.getItem(MNEMONIC);
+    }
+
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      this.secureStore
+        .getItem(MNEMONIC)
+        .then(mnemonic => (this.mnemonic = mnemonic as string))
+        .catch(fail => {});
+      this.secureStore
+        .getItem(PRIVATE_KEY)
+        .then(privateKey => (this.privateKey = privateKey as string))
+        .catch(fail => {});
+    }
+  }
+
+  storeSecrets() {
+    if (this.platform.is('pwa') || this.platform.is('desktop')) {
+      // for development only
+      this.store.setItem(PRIVATE_KEY, this.privateKey);
+      this.store.setItem(MNEMONIC, this.mnemonic);
+    }
+
+    // save private key safely
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      this.secureStore
+        .setItem(PRIVATE_KEY, this.privateKey)
+        .then(success => {})
+        .catch(error => {});
+      this.secureStore
+        .setItem(MNEMONIC, this.mnemonic)
+        .then(success => {})
+        .catch(error => {});
+    }
   }
 }
