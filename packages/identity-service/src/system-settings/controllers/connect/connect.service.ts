@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AccountService } from '../../../identity/entities/account/account.service';
 import { TokenCacheService } from '../../../auth/entities/token-cache/token-cache.service';
 import { ServerSettingsService } from '../../../system-settings/entities/server-settings/server-settings.service';
 
@@ -7,11 +8,16 @@ export class ConnectService {
   constructor(
     private readonly tokenCacheService: TokenCacheService,
     private readonly settings: ServerSettingsService,
+    private readonly account: AccountService,
   ) {}
 
   async tokenDelete(accessToken: string) {
     await this.checkAndClearSettings(accessToken);
     await this.tokenCacheService.deleteMany({ accessToken });
+  }
+
+  async deleteProfile(uuid: string) {
+    return await this.account.delete({ uuid });
   }
 
   async checkAndClearSettings(accessToken: string) {

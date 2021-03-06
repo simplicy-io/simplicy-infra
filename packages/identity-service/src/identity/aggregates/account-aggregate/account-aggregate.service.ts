@@ -59,9 +59,10 @@ export class AccountAggregateService {
                 return from(
                   this.account.save({
                     ...payload,
+                    uuid: token?.sub,
                     phone: token?.phoneNumber,
                     email: token?.email,
-                    fullName: token.name,
+                    fullName: token?.name,
                   }),
                 );
               }

@@ -11,4 +11,10 @@ export class ConnectController {
   async tokenDelete(@Body('accessToken') accessToken) {
     return await this.connect.tokenDelete(accessToken);
   }
+
+  @Post('v1/user_delete')
+  @UseGuards(AuthServerVerificationGuard)
+  async userDelete(@Body('user') user) {
+    return await this.connect.deleteProfile(user);
+  }
 }
