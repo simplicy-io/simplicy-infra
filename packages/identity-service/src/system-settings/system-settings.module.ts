@@ -11,6 +11,7 @@ import { ConnectService } from './controllers/connect/connect.service';
 import { HealthCheckAggregateService } from './aggregates/health-check/health-check.service';
 import { HealthController } from './controllers/health/health.controller';
 import { DatabaseHealthIndicatorService } from './aggregates/database-health-indicator/database-health-indicator.service';
+import { IdentityModule } from '../identity/identity.module';
 
 @Global()
 @Module({
@@ -19,6 +20,7 @@ import { DatabaseHealthIndicatorService } from './aggregates/database-health-ind
     HttpModule,
     CqrsModule,
     TerminusModule,
+    IdentityModule,
   ],
   providers: [
     SettingsService,
