@@ -4,10 +4,11 @@ import { RoleGuard } from './guards/role.guard';
 import { AuthSchedulers } from './schedulers';
 import { AuthControllers } from './controllers';
 import { AuthAggregates } from './aggregates';
+import { AuthEntitiesModule } from './entities/auth-entities.module';
 
 @Global()
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, AuthEntitiesModule],
   providers: [
     AuthServerVerificationGuard,
     RoleGuard,
@@ -15,7 +16,12 @@ import { AuthAggregates } from './aggregates';
     ...AuthSchedulers,
     ...AuthAggregates,
   ],
-  exports: [AuthServerVerificationGuard, RoleGuard, ...AuthAggregates],
+  exports: [
+    AuthServerVerificationGuard,
+    RoleGuard,
+    ...AuthAggregates,
+    AuthEntitiesModule,
+  ],
   controllers: [...AuthControllers],
 })
 export class AuthModule {}

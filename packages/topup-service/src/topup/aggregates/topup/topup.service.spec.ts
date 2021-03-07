@@ -1,6 +1,6 @@
 import { HttpModule } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { StripeServiceService } from '../../../common/service/stripe-service/stripe-service.service';
+import { BunqService } from '../../../common/service/bunq/bunq.service';
 import { ConfigService } from '../../../config/config.service';
 import { TopupService } from './topup.service';
 
@@ -17,7 +17,7 @@ describe('TopupService', () => {
           useValue: {},
         },
         {
-          provide: StripeServiceService,
+          provide: BunqService,
           useValue: {},
         },
       ],

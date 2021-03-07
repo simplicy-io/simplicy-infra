@@ -1,18 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService, STRIPE_PUBLIC_KEY } from './config/config.service';
 import { SERVICE } from './constants/app-strings';
+import { ServerSettingsService } from './system-settings/entities/server-settings/server-settings.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly settings: ServerSettingsService) {}
 
   getRoot() {
     return { service: SERVICE };
   }
 
-  getInfo() {
-    return {
-      stripe_public_key: this.configService.get(STRIPE_PUBLIC_KEY),
-    };
+  async getInfo() {
+    const settings = await this.settings.find();
+    const info = settings.toJSON();
+
+    // Delete secrets
+    info.clientSecret = undefined;
+    info._id = undefined;
+    info.id = undefined;
+
+    return info;
   }
 }

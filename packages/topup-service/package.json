@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit"
   },
   "dependencies": {
+    "@bunq-community/bunq-js-client": "^1.1.2",
     "@ethereumjs/tx": "^3.0.1",
     "@godaddy/terminus": "^4.5.0",
     "@hapi/joi": "^17.1.1",
@@ -37,6 +38,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.12.2",
     "mongodb": "^3.6.3",
+    "mongoose": "^5.11.19",
     "mqtt": "^4.2.6",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -44,6 +46,7 @@
     "saslprep": "^1.0.3",
     "stripe": "^8.137.0",
     "swagger-ui-express": "^4.1.6",
+    "unique-names-generator": "^4.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

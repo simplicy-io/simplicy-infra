@@ -4,16 +4,13 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import {
-  CLIENT_ID,
-  CLIENT_SECRET,
-  ConfigService,
-} from '../../config/config.service';
+import { ServerSettingsService } from '../../system-settings/entities/server-settings/server-settings.service';
 import { AUTHORIZATION } from '../../constants/app-strings';
 
 @Injectable()
 export class AuthServerVerificationGuard implements CanActivate {
-  constructor(private readonly config: ConfigService) {}
+  constructor(private readonly settings: ServerSettingsService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
@@ -28,18 +25,16 @@ export class AuthServerVerificationGuard implements CanActivate {
 
   async verifyAuthorization(authorizationHeader): Promise<boolean> {
     try {
+      const settings = await this.settings.find();
       const basicAuthHeader = authorizationHeader.split(' ')[1];
-      const [reqClientId, reqClientSecret] = Buffer.from(
-        basicAuthHeader,
-        'base64',
-      )
+      const [clientId, clientSecret] = Buffer.from(basicAuthHeader, 'base64')
         .toString()
         .split(':');
 
-      const envClientId = this.config.get(CLIENT_ID);
-      const envClientSecret = this.config.get(CLIENT_SECRET);
-
-      if (envClientId === reqClientId && envClientSecret === reqClientSecret) {
+      if (
+        settings?.clientId === clientId &&
+        settings?.clientSecret === clientSecret
+      ) {
         return true;
       }
     } catch (error) {

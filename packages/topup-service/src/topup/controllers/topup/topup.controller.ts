@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
   UsePipes,
   ValidationPipe,
@@ -12,11 +11,6 @@ import { AddTopupDTO } from './topup.dto';
 @Controller('topup')
 export class TopupController {
   constructor(private readonly topupService: TopupService) {}
-
-  @Get('v1/get_balance')
-  getBalance() {
-    return this.topupService.getBalance();
-  }
 
   @Post('v1/add')
   @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true }))

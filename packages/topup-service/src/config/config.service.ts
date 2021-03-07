@@ -7,20 +7,32 @@ export interface EnvConfig {
   [prop: string]: string;
 }
 
+// NodeJS Environment
 export const NODE_ENV = 'NODE_ENV';
-export const JWKS_ENDPOINT = 'JWKS_ENDPOINT';
-export const RPC_URI = 'RPC_URI';
-export const CLIENT_ID = 'CLIENT_ID';
-export const CLIENT_SECRET = 'CLIENT_SECRET';
+
+// MongoDB Connection
+export const MONGO_URI_PREFIX = 'MONGO_URI_PREFIX';
+export const DB_USER = 'DB_USER';
+export const DB_PASSWORD = 'DB_PASSWORD';
+export const DB_HOST = 'DB_HOST';
+export const DB_NAME = 'DB_NAME';
+
+// Blockchain client
+export const BLOCKCHAIN_CLIENT_URL = 'BLOCKCHAIN_CLIENT_URL';
+
+// Bunq Variables
+export const BUNQ_ENC_KEY = 'BUNQ_ENC_KEY';
+export const BUNQ_API_KEY = 'BUNQ_API_KEY';
+export const BUNQ_ENV = 'BUNQ_ENV';
+export const BUNQ_USER_ID = 'BUNQ_USER_ID';
+export const BUNQ_MONETARY_ACCOUNT_ID = 'BUNQ_MONETARY_ACCOUNT_ID';
+
+// Optional Event Bus Variables
 export const EVENTS_HOST = 'EVENTS_HOST';
 export const EVENTS_PROTO = 'EVENTS_PROTO';
 export const EVENTS_PORT = 'EVENTS_PORT';
 export const EVENTS_USER = 'EVENTS_USER';
 export const EVENTS_PASSWORD = 'EVENTS_PASSWORD';
-export const WALLET_ADDRESS = 'WALLET_ADDRESS';
-export const BLOCKCHAIN_CLIENT_URL = 'BLOCKCHAIN_CLIENT_URL';
-export const STRIPE_PUBLIC_KEY = 'STRIPE_PUBLIC_KEY';
-export const STRIPE_SECRET_KEY = 'STRIPE_SECRET_KEY';
 
 @Injectable()
 export class ConfigService {
@@ -40,14 +52,17 @@ export class ConfigService {
       [NODE_ENV]: Joi.string()
         .valid('development', 'production', 'test', 'provision', 'staging')
         .default('development'),
-      [RPC_URI]: Joi.string().uri(),
-      [WALLET_ADDRESS]: Joi.string().required(),
-      [STRIPE_PUBLIC_KEY]: Joi.string().required(),
-      [STRIPE_SECRET_KEY]: Joi.string().required(),
+      [MONGO_URI_PREFIX]: Joi.string().default('mongodb'),
       [BLOCKCHAIN_CLIENT_URL]: Joi.string().required(),
-      [CLIENT_ID]: Joi.string().optional(),
-      [CLIENT_SECRET]: Joi.string().optional(),
-      [JWKS_ENDPOINT]: Joi.string().optional(),
+      [DB_USER]: Joi.string().required(),
+      [DB_PASSWORD]: Joi.string().required(),
+      [DB_HOST]: Joi.string().required(),
+      [DB_NAME]: Joi.string().required(),
+      [BUNQ_ENC_KEY]: Joi.string().required(),
+      [BUNQ_API_KEY]: Joi.string().required(),
+      [BUNQ_USER_ID]: Joi.string().required(),
+      [BUNQ_MONETARY_ACCOUNT_ID]: Joi.string().required(),
+      [BUNQ_ENV]: Joi.string().default('SANDBOX'),
       [EVENTS_PROTO]: Joi.string().optional(),
       [EVENTS_USER]: Joi.string().optional(),
       [EVENTS_PASSWORD]: Joi.string().optional(),
