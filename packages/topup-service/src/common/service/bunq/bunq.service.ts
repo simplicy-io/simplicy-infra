@@ -24,7 +24,7 @@ export class BunqService implements OnModuleInit {
     const apiKey = this.config.get(BUNQ_API_KEY);
     const environment = this.config.get(BUNQ_ENV);
     const deviceName = uniqueDeviceName();
-    Logger.log(deviceName, this.constructor.name);
+    Logger.log(`Device Name {${deviceName}}`, this.constructor.name);
     // create a new bunqJSClient with the new storage instance
     this.bunqClient = new BunqJSClient(this.bunqStore, new BunqLogger());
 

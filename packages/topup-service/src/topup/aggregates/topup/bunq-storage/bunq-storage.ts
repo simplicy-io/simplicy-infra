@@ -12,6 +12,13 @@ export class BunqStorage implements StorageInterface {
   }
 
   async set(key: string, value: any): Promise<any> {
+    const entry = await this.store.findOne({ key });
+    if (entry) {
+      return await this.store.updateOne(
+        { key: entry.key },
+        { $set: { value } },
+      );
+    }
     return await this.store.save({ key, value });
   }
 
