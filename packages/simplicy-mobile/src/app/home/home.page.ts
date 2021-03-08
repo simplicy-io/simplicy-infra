@@ -167,39 +167,43 @@ export class HomePage implements OnInit {
   }
 
   loadSecrets() {
+    const privateKey = `${PRIVATE_KEY}|${this.address}`;
+    const mnemonic = `${MNEMONIC}|${this.address}`;
     if (this.platform.is('pwa') || this.platform.is('desktop')) {
       // for development only
-      this.privateKey = this.store.getItem(PRIVATE_KEY);
-      this.mnemonic = this.store.getItem(MNEMONIC);
+      this.privateKey = this.store.getItem(privateKey);
+      this.mnemonic = this.store.getItem(mnemonic);
     }
 
     if (this.platform.is('android') || this.platform.is('ios')) {
       this.secureStore
-        .getItem(MNEMONIC)
+        .getItem(mnemonic)
         .then(mnemonic => (this.mnemonic = mnemonic as string))
         .catch(fail => {});
       this.secureStore
-        .getItem(PRIVATE_KEY)
+        .getItem(privateKey)
         .then(privateKey => (this.privateKey = privateKey as string))
         .catch(fail => {});
     }
   }
 
   storeSecrets() {
+    const privateKey = `${PRIVATE_KEY}|${this.address}`;
+    const mnemonic = `${MNEMONIC}|${this.address}`;
     if (this.platform.is('pwa') || this.platform.is('desktop')) {
       // for development only
-      this.store.setItem(PRIVATE_KEY, this.privateKey);
-      this.store.setItem(MNEMONIC, this.mnemonic);
+      this.store.setItem(privateKey, this.privateKey);
+      this.store.setItem(mnemonic, this.mnemonic);
     }
 
     // save private key safely
     if (this.platform.is('android') || this.platform.is('ios')) {
       this.secureStore
-        .setItem(PRIVATE_KEY, this.privateKey)
+        .setItem(privateKey, this.privateKey)
         .then(success => {})
         .catch(error => {});
       this.secureStore
-        .setItem(MNEMONIC, this.mnemonic)
+        .setItem(mnemonic, this.mnemonic)
         .then(success => {})
         .catch(error => {});
     }
