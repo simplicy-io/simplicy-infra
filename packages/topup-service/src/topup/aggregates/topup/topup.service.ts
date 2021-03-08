@@ -33,14 +33,21 @@ export class TopupService {
               value: payload.amount,
               currency: 'EUR',
             },
+            // { redirect_url: 'https://9f173363d7c7.ngrok.io/api/webhook/boom' }
           ),
         );
       }),
-      switchMap(response => {
-        return this.mintMoney(
-          JSON.stringify(Number(payload.amount) / 100),
-          payload.address,
-        );
+      switchMap(res => {
+        if (res?.length === 1) {
+          const id = res[0];
+          return from(
+            this.bunq.bunqClient.api.bunqMeTabs.get(
+              Number(userId),
+              Number(monetaryAccountId),
+              id?.Id?.id,
+            ),
+          );
+        }
       }),
       catchError(err => {
         return throwError(new BadRequestException(err?.raw?.message || err));
