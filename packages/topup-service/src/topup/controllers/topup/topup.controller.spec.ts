@@ -1,4 +1,8 @@
+import { HttpService } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TokenCacheService } from '../../../auth/entities/token-cache/token-cache.service';
+import { ConfigService } from '../../../config/config.service';
+import { ServerSettingsService } from '../../../system-settings/entities/server-settings/server-settings.service';
 import { TopupService } from '../../aggregates/topup/topup.service';
 import { TopupController } from './topup.controller';
 
@@ -13,6 +17,10 @@ describe('TopupController', () => {
           provide: TopupService,
           useValue: {},
         },
+        { provide: ServerSettingsService, useValue: {} },
+        { provide: TokenCacheService, useValue: {} },
+        { provide: HttpService, useValue: {} },
+        { provide: ConfigService, useValue: {} },
       ],
     }).compile();
 

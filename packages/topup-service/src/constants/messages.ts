@@ -5,3 +5,5 @@ export const NOT_CONNECTED = 'not connected';
 export const SERVICE_ALREADY_REGISTERED = 'Service already registered';
 export const INVALID_CODE = 'Invalid Code';
 export const INVALID_STATE = 'Invalid State';
+export const INVALID_BUNQ_ID = 'Invalid Bunq Id';
+export const INVALID_ADDRESS = 'Invalid Crypto Address';

@@ -5,6 +5,7 @@ DB_NAME=topup-service
 DB_PASSWORD=admin
 DB_HOST=localhost
 BLOCKCHAIN_CLIENT_URL=http://localhost:8000
+ID_SERVICE=http://localhost:8100
 BUNQ_ENC_KEY=98d90948a157465a00cf0edbea98492b
 BUNQ_API_KEY=sandbox_64c4f8b6ea0ccfa17e4a9048e77e589e13fdfbafc27ed3cf2c8db432
 BUNQ_USER_ID=87859

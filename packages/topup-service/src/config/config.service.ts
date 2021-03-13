@@ -20,6 +20,9 @@ export const DB_NAME = 'DB_NAME';
 // Blockchain client
 export const BLOCKCHAIN_CLIENT_URL = 'BLOCKCHAIN_CLIENT_URL';
 
+// Blockchain client
+export const ID_SERVICE = 'ID_SERVICE';
+
 // Bunq Variables
 export const BUNQ_ENC_KEY = 'BUNQ_ENC_KEY';
 export const BUNQ_API_KEY = 'BUNQ_API_KEY';
@@ -54,6 +57,7 @@ export class ConfigService {
         .default('development'),
       [MONGO_URI_PREFIX]: Joi.string().default('mongodb'),
       [BLOCKCHAIN_CLIENT_URL]: Joi.string().required(),
+      [ID_SERVICE]: Joi.string().required(),
       [DB_USER]: Joi.string().required(),
       [DB_PASSWORD]: Joi.string().required(),
       [DB_HOST]: Joi.string().required(),

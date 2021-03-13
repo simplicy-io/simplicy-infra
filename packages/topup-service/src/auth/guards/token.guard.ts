@@ -4,14 +4,25 @@ import {
   Injectable,
   NotImplementedException,
   HttpService,
+  ForbiddenException,
 } from '@nestjs/common';
-import { switchMap, retry } from 'rxjs/operators';
+import { switchMap, map, catchError } from 'rxjs/operators';
 import { of, from, throwError } from 'rxjs';
 import Express from 'express';
-import { TOKEN } from '../../constants/app-strings';
+import {
+  AUTHORIZATION,
+  BEARER_HEADER_VALUE_PREFIX,
+  TOKEN,
+} from '../../constants/app-strings';
+import { FETCH_ACCOUNT_BY_PHONE_ENDPOINT } from '../../constants/url-endpoints';
 import { TokenCacheService } from '../entities/token-cache/token-cache.service';
-import { TokenCache } from '../entities/token-cache/token-cache.interface';
+import {
+  Account,
+  TokenCache,
+} from '../entities/token-cache/token-cache.interface';
 import { ServerSettingsService } from '../../system-settings/entities/server-settings/server-settings.service';
+import { ConfigService, ID_SERVICE } from '../../config/config.service';
+import { PLEASE_RUN_SETUP } from '../../constants/messages';
 
 @Injectable()
 export class TokenGuard implements CanActivate {
@@ -19,12 +30,17 @@ export class TokenGuard implements CanActivate {
     private readonly settingsService: ServerSettingsService,
     private readonly tokenCacheService: TokenCacheService,
     private readonly http: HttpService,
+    private readonly config: ConfigService,
   ) {}
 
   canActivate(context: ExecutionContext) {
     const httpContext = context.switchToHttp();
     const req = httpContext.getRequest();
     const accessToken = this.getAccessToken(req);
+    if (!accessToken) {
+      throw new ForbiddenException();
+    }
+
     return from(this.tokenCacheService.findOne({ accessToken })).pipe(
       switchMap(cachedToken => {
         if (!cachedToken) {
@@ -44,7 +60,7 @@ export class TokenGuard implements CanActivate {
     return from(this.settingsService.find()).pipe(
       switchMap(settings => {
         if (!settings) {
-          return throwError(new NotImplementedException());
+          return throwError(new NotImplementedException(PLEASE_RUN_SETUP));
         }
         return this.http
           .post(
@@ -58,7 +74,23 @@ export class TokenGuard implements CanActivate {
             },
           )
           .pipe(
-            retry(3),
+            switchMap(response => {
+              const headers = {
+                [AUTHORIZATION]: `${BEARER_HEADER_VALUE_PREFIX} ${accessToken}`,
+              };
+              return this.http
+                .get(
+                  this.config.get(ID_SERVICE) + FETCH_ACCOUNT_BY_PHONE_ENDPOINT,
+                  { headers },
+                )
+                .pipe(
+                  map(res => {
+                    delete res.data._id;
+                    response.data.account = res.data;
+                    return response;
+                  }),
+                );
+            }),
             switchMap(response => {
               if (response.data.active) {
                 return from(this.cacheToken(response.data, accessToken)).pipe(
@@ -72,6 +104,7 @@ export class TokenGuard implements CanActivate {
             }),
           );
       }),
+      catchError(error => of(false)),
     );
   }
 
@@ -93,6 +126,7 @@ export class TokenGuard implements CanActivate {
       email_verified: boolean;
       phone_number: string;
       phone_number_verified: boolean;
+      account: Account;
     },
     accessToken: string,
   ): Promise<TokenCache> {

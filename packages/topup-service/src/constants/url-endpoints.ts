@@ -4,3 +4,5 @@ export const SERVICE_REGISTER_ENDPOINT = '/service/v1/register';
 export const GET_EURO_BALANCE_ENDPOINT = 'api/euro/balance_of';
 export const TRANSFER_EURO_BALANCE_ENDPOINT = 'api/euro/transfer_from_owner';
 export const BUNQ_TAB_WEBHOOK = '/api/bunq/tab/webhook';
+export const FETCH_ACCOUNT_BY_PHONE_ENDPOINT =
+  '/api/account/v1/fetch_account_by_phone';

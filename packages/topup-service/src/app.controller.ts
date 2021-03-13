@@ -14,16 +14,4 @@ export class AppController {
   async getInfo() {
     return await this.appService.getInfo();
   }
-
-  // @All('webhook/*')
-  // wildcardWebhook(@Req() req) {
-  //   console.log({
-  //     body: req.body,
-  //     params: req.params,
-  //     query: req.query,
-  //     headers: req.headers,
-  //     method: req.method,
-  //   });
-  //   return { success: true };
-  // }
 }

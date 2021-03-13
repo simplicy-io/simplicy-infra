@@ -16,4 +16,13 @@ export interface TokenCache extends Document {
   roles: string[];
   clientId: string;
   trustedClient: number;
+  account: Account;
+}
+
+export interface Account {
+  address?: string;
+  email?: string;
+  phone?: string;
+  fullName?: string;
+  creation?: Date;
 }

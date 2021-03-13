@@ -18,6 +18,7 @@ const schema = new mongoose.Schema(
     roles: [String],
     clientId: String,
     trustedClient: Boolean,
+    account: mongoose.Schema.Types.Mixed,
   },
   { collection: 'token_cache', versionKey: false },
 );
