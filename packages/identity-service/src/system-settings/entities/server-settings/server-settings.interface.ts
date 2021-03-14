@@ -13,4 +13,5 @@ export interface ServerSettings extends Document {
   callbackURLs?: string;
   revocationURL?: string;
   clientTokenUuid?: string;
+  callbackProtocol?: string;
 }

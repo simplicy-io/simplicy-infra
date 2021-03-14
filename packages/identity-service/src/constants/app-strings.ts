@@ -2,6 +2,7 @@ export const ADMINISTRATOR = 'administrator';
 export const TOKEN = 'token';
 export const AUTHORIZATION = 'authorization';
 export const SERVICE = 'identity-service';
+export const CALLBACK_PROTOCOL = 'simplicy';
 export const PUBLIC = 'public';
 export const APP_NAME = 'identity-service';
 export const SWAGGER_ROUTE = 'api-docs';

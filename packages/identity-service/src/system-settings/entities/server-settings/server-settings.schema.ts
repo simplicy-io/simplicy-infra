@@ -15,6 +15,7 @@ const schema = new mongoose.Schema(
     callbackURLs: [String],
     revocationURL: String,
     clientTokenUuid: String,
+    callbackProtocol: String,
   },
   { collection: 'server_settings', versionKey: false },
 );
