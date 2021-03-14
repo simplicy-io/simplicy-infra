@@ -11,7 +11,7 @@ export class AppController {
   }
 
   @Get('info')
-  getInfo() {
-    return this.appService.getInfo();
+  async getInfo() {
+    return await this.appService.getInfo();
   }
 }

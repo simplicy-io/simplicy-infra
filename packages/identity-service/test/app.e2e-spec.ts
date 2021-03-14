@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppController } from '../src/app.controller';
 import { AppService } from '../src/app.service';
 import { SERVICE } from '../src/constants/app-strings';
-import { ConfigService } from '../src/config/config.service';
+import { SetupService } from '../src/system-settings/controllers/setup/setup.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -15,7 +15,7 @@ describe('AppController (e2e)', () => {
       providers: [
         AppService,
         {
-          provide: ConfigService,
+          provide: SetupService,
           useValue: {},
         },
       ],
